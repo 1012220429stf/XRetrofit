@@ -18,6 +18,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 不显示Log
+            buildConfigField "boolean", "ENABLE_DEBUG", "false"
+        }
+        debug {
+            // 显示Log
+            buildConfigField "boolean", "ENABLE_DEBUG", "true"
         }
     }
 
