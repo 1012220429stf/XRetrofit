@@ -18,7 +18,7 @@ allprojects {
 ### Step 2. Add the dependency
 
 	dependencies {
-	        compile 'com.github.JiangHaiYang01:XRetrofit:1.0.0'
+	        compile 'com.github.JiangHaiYang01:XRetrofit:1.0.2'
 	}
 
 
@@ -39,7 +39,7 @@ allprojects {
  
  懒  直接放代码   
  
-```androiddatabinding
+```
     public XRetrofit seReadTimeout(int readTimeout) {//设置读取超时时间
         this.readTimeout = readTimeout;
         return this;
@@ -66,7 +66,7 @@ allprojects {
  
  比如  http://apis.juhe.cn/mobile/get?phone=18856907654&key=5778e9d9cf089fc3b093b162036fc0e1
  
- ```androiddatabinding
+ ```
 
     public void btnYS(View view) {
 
@@ -99,7 +99,7 @@ allprojects {
 
 
 
-```androiddatabinding
+```
     public void btnQuery(View view) {
         String baseUrl = "http://apis.juhe.cn/"
         String url = baseUrl + "mobile/get";
@@ -137,7 +137,7 @@ allprojects {
 
 接口 doPost  
 
-```androiddatabinding
+```
 
     public void btnPath(View view) {
         XRetrofit.create(this)
@@ -181,7 +181,7 @@ allprojects {
 
 这个就比方说下载一个图片啊  apk版本更新 什么的 
 
-```androiddatabinding
+```
     public void btnPostFile(View view) {
   
         XRetrofit.create(this)
@@ -231,7 +231,7 @@ allprojects {
     
 （2）第二种方式
 
-```androiddatabinding
+```
         XRetrofit.create(this)
                 .build(baseUrl)
                 .doDownLoad("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg",
@@ -245,7 +245,7 @@ allprojects {
 
 #### 下载多个文件
 
-```androiddatabinding
+```
         List<String> urlList = Arrays.asList("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
                 "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2701408155,2184514200&fm=27&gp=0.jpg",
                 "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg");
@@ -260,7 +260,7 @@ allprojects {
 ```
 
 
-```androiddatabinding
+```
   HashMap<String, String> map = new HashMap<>();
         map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg","1.jpg");
         map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg","2.jpg");
@@ -288,7 +288,7 @@ allprojects {
 
 #### 下载大文件 断点下载
 
-```androiddatabinding
+```
     public void btnDownBig(View view) {
         XRetrofit.create(this)
                 .build(baseUrl)
@@ -312,7 +312,7 @@ allprojects {
     }
 ```
 
-```androiddatabinding
+```
     public void btnDownBig(View view) {
         XRetrofit.create(this)
                 .build(baseUrl)
@@ -339,7 +339,7 @@ allprojects {
 暂停下载
 
 
-```androiddatabinding
+```
  XRetrofit.create(this)
                 .stopDown(url);
 ```
@@ -352,7 +352,7 @@ allprojects {
 
 ## 添加请求头
 
-```androiddatabinding
+```
  HashMap<String, String> map = new HashMap<>();
         map.put("ip", "192.168.1.108");
         XRetrofit.create(this)
@@ -363,7 +363,7 @@ allprojects {
 
 ## 上传
 
-```androiddatabinding
+```
   public void upLoad(View view) {
         XRetrofit.create(this)
                 .build(baseUrl)
