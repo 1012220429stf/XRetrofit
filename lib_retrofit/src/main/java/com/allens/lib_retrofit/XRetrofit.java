@@ -107,7 +107,7 @@ public class XRetrofit {
             @Override
             public void log(String message) {
                 //打印retrofit日志
-                Log.i("RetrofitLog", "retrofitBack = " + message);
+                Log.i("RetrofitLog", "retrofitBack -> " + message);
             }
         });
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
