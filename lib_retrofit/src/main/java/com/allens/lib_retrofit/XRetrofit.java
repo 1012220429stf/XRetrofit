@@ -21,7 +21,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
@@ -105,9 +110,19 @@ public class XRetrofit {
     private HttpLoggingInterceptor createInterceptor() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
-            public void log(String message) {
-                //打印retrofit日志
-                Log.i("RetrofitLog", "retrofitBack -> " + message);
+            public void log(final String message) {
+                Flowable.just(message)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<String>() {
+                            @Override
+                            public void accept(String s) throws Exception {
+                                Log.i("RetrofitLog", "retrofitBack -> " + message);
+                                Log.i("RetrofitLog", "Thread---->" + Thread.currentThread().getName());
+                            }
+                        });
+//                //打印retrofit日志
+//                Log.i("RetrofitLog", "retrofitBack -> " + message);
+//                Log.i("RetrofitLog","Thread---->"+Thread.currentThread().getName());
             }
         });
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
