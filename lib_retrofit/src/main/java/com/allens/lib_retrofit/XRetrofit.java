@@ -93,6 +93,7 @@ public class XRetrofit {
                     })
                     .retryOnConnectionFailure(true);//连接失败后是否重新连接
 
+        Log.e("createInterceptor", "BuildConfig.DEBUG---->" + BuildConfig.DEBUG);
         //添加拦截
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(createInterceptor());
@@ -108,7 +109,6 @@ public class XRetrofit {
 
     //创建拦截器
     private HttpLoggingInterceptor createInterceptor() {
-        Log.e("createInterceptor", "BuildConfig.DEBUG---->" + BuildConfig.DEBUG);
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(final String message) {
