@@ -116,13 +116,10 @@ public class XRetrofit {
                         .subscribe(new Consumer<String>() {
                             @Override
                             public void accept(String s) throws Exception {
-                                Log.i("RetrofitLog", "retrofitBack -> " + message);
-                                Log.i("RetrofitLog", "Thread---->" + Thread.currentThread().getName());
+                                //打印retrofit日志
+                                Log.e("RetrofitLog", "retrofitBack -> " + message);
                             }
                         });
-//                //打印retrofit日志
-//                Log.i("RetrofitLog", "retrofitBack -> " + message);
-//                Log.i("RetrofitLog","Thread---->"+Thread.currentThread().getName());
             }
         });
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
