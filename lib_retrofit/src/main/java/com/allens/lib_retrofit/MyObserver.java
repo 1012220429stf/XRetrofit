@@ -37,6 +37,7 @@ public class MyObserver {
 
             @Override
             public void onNext(ResponseBody responseBody) {
+                WaitDialogUtil.create().hide();
                 String filePath = DownLoadUtil.create().createFile(downLoadPath);
                 String newFilePath = filePath + DownLoadUtil.create().getFileName(url);
                 DownLoadUtil.create().downLoad(responseBody, context, newFilePath, listener);
@@ -44,8 +45,8 @@ public class MyObserver {
 
             @Override
             public void onError(Throwable e) {
-                DownLoadUtil.create().handlerFailed(e, listener);
                 WaitDialogUtil.create().hide();
+                DownLoadUtil.create().handlerFailed(e, listener);
             }
 
             @Override
@@ -65,6 +66,7 @@ public class MyObserver {
 
             @Override
             public void onNext(ResponseBody responseBody) {
+                WaitDialogUtil.create().hide();
                 try {
                     Gson gson = new Gson();
                     T t = gson.fromJson(responseBody.string(), tClass);
@@ -76,8 +78,8 @@ public class MyObserver {
 
             @Override
             public void onError(Throwable e) {
-                listener.onError(e);
                 WaitDialogUtil.create().hide();
+                listener.onError(e);
             }
 
             @Override
@@ -97,6 +99,7 @@ public class MyObserver {
 
             @Override
             public void onNext(ResponseBody responseBody) {
+                WaitDialogUtil.create().hide();
                 try {
                     Gson gson = new Gson();
                     T t = gson.fromJson(responseBody.string(), tClass);
@@ -108,8 +111,8 @@ public class MyObserver {
 
             @Override
             public void onError(Throwable e) {
-                listener.onError(e);
                 WaitDialogUtil.create().hide();
+                listener.onError(e);
             }
 
             @Override
@@ -159,6 +162,7 @@ public class MyObserver {
 
             @Override
             public void onNext(ResponseBody responseBody) {
+                WaitDialogUtil.create().hide();
                 try {
                     Gson gson = new Gson();
                     T t = gson.fromJson(responseBody.string(), tClass);
@@ -170,12 +174,13 @@ public class MyObserver {
 
             @Override
             public void onError(Throwable e) {
+                WaitDialogUtil.create().hide();
                 listener.onError(e);
             }
 
             @Override
             public void onComplete() {
-
+                WaitDialogUtil.create().hide();
             }
         };
     }
