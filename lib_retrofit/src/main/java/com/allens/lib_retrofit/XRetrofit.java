@@ -92,15 +92,8 @@ public class XRetrofit {
                         }
                     })
                     .retryOnConnectionFailure(true);//连接失败后是否重新连接
-
-        Log.e("createInterceptor", "BuildConfig.DEBUG---->" + BuildConfig.DEBUG);
-        //添加拦截
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(createInterceptor());
-        }
-
-
         return builder
+                .addInterceptor(createInterceptor()) //添加拦截
                 .readTimeout(readTimeout, TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)//设置写的超时时间
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)//设置连接超时时间
@@ -112,15 +105,7 @@ public class XRetrofit {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(final String message) {
-                Flowable.just(message)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<String>() {
-                            @Override
-                            public void accept(String s) throws Exception {
-                                //打印retrofit日志
-                                Log.e("RetrofitLog", "retrofitBack -> " + message);
-                            }
-                        });
+                Log.e("RetrofitLog", "retrofitBack -> " + message); //打印retrofit日志
             }
         });
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
