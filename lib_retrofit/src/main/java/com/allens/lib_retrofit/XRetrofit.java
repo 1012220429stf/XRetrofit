@@ -108,6 +108,7 @@ public class XRetrofit {
 
     //创建拦截器
     private HttpLoggingInterceptor createInterceptor() {
+        Log.e("createInterceptor", "BuildConfig.DEBUG---->" + BuildConfig.DEBUG);
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(final String message) {
