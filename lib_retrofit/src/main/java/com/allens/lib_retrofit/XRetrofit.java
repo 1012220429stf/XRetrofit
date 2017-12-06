@@ -1,8 +1,10 @@
 package com.allens.lib_retrofit;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.allens.lib_retrofit.impl.ApiService;
@@ -46,26 +48,25 @@ public class XRetrofit {
     private int readTimeout = 10;
     private int writeTimeout = 10;
     private Retrofit retrofit;
-    private Context context;
+    private Activity activity;
     private Boolean isShowDialog;
     private Map<String, String> heardMap;
 
-    public static XRetrofit create(Context context) {
+
+    public static XRetrofit create() {
         if (mInstance == null) {
             synchronized (XRetrofit.class) {
-                mInstance = new XRetrofit(context);
+                mInstance = new XRetrofit();
             }
         }
         return mInstance;
     }
 
-    private XRetrofit(Context context) {
-        this.context = context;
+    private XRetrofit() {
     }
 
     public XRetrofit build(String baseUrl) {
-        isShowDialog = true;//默认显示
-        WaitDialogUtil.create().setDialog(null);//默认使用自带的dialog
+        isShowDialog = false;//默认不显示
         Retrofit.Builder builder = new Retrofit.Builder();
         retrofit = builder
                 .client(createOKHttpClient(heardMap))
@@ -129,22 +130,41 @@ public class XRetrofit {
         return this;
     }
 
-    //显示dialog
-    public XRetrofit setDialog(Dialog dialog) {
+    //显示自定义dialog
+    public XRetrofit setDialog(Activity activity, Dialog dialog) {
+        this.activity = activity;
         WaitDialogUtil.create().setDialog(dialog);
+        isShowDialog = true;
+        return this;
+    }
+
+    //显示自定义dialog
+    public XRetrofit setDialog(Fragment fragment, Dialog dialog) {
+        this.activity = fragment.getActivity();
+        WaitDialogUtil.create().setDialog(dialog);
+        isShowDialog = true;
         return this;
     }
 
 
-    public XRetrofit hideDialog() {
-        isShowDialog = false;
+    public XRetrofit isShowDialog(Activity activity, boolean isShow) {
+        this.activity = activity;
+        isShowDialog = isShow;
+        return this;
+    }
+
+    public XRetrofit isShowDialog(Fragment fragment, boolean isShow) {
+        this.activity = fragment.getActivity();
+        isShowDialog = isShow;
         return this;
     }
 
     //Get 请求后面带参数
     public <T> void doGet(final Class<T> tClass, String url, final OnRetrofit.OnQueryMapListener<T> listener) {
-        if (isShowDialog)
-            WaitDialogUtil.create().show(context);
+        if (isShowDialog) {
+            if (activity != null)
+                WaitDialogUtil.create().show(activity);
+        }
         HashMap<String, String> map = new HashMap<>();
         listener.onMap(map);
         String param = prepareParam(map);
@@ -162,8 +182,10 @@ public class XRetrofit {
 
     //Get 请求 后面不带参数
     public <T> void doGet(final Class<T> tClass, String url, final OnRetrofit.OnGetListener<T> listener) {
-        if (isShowDialog)
-            WaitDialogUtil.create().show(context);
+        if (isShowDialog) {
+            if (activity != null)
+                WaitDialogUtil.create().show(activity);
+        }
         ApiService apiService = getService(ApiService.class);
         apiService.getGetData(url)
                 .subscribeOn(Schedulers.io())//在子线程取数据
@@ -175,8 +197,10 @@ public class XRetrofit {
      * @param UrlPath baseUrl 后面更上的url地址
      */
     public <T> void doPost(final Class<T> tClass, String UrlPath, final OnRetrofit.OnQueryMapListener<T> listener) {
-        if (isShowDialog)
-            WaitDialogUtil.create().show(context);
+        if (isShowDialog) {
+            if (activity != null)
+                WaitDialogUtil.create().show(activity);
+        }
         HashMap<String, String> map = new HashMap<>();
         listener.onMap(map);
         ApiService apiService = getService(ApiService.class);
@@ -187,7 +211,7 @@ public class XRetrofit {
     }
 
     //文件名 自己定义
-    public void doDownLoad(String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
+    public void doDownLoad(Context context, String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
         Boolean isAlready = DownLoadUtil.create().isAlreadyDownLoadFromFileName(downLoadPath, FileName);
         if (isAlready) {
             listener.hasDown(DownLoadUtil.create().createFile(downLoadPath) + FileName);
@@ -201,7 +225,7 @@ public class XRetrofit {
     }
 
     //文件名 是下载时候的文件名
-    public void doDownLoad(String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
+    public void doDownLoad(Context context, String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
         Boolean isAlready = DownLoadUtil.create().isAlreadyDownLoadFromUrl(downLoadPath, url);
         if (isAlready) {
             listener.hasDown(DownLoadUtil.create().createFile(downLoadPath) + DownLoadUtil.create().getFileName(url));
@@ -215,14 +239,14 @@ public class XRetrofit {
     }
 
     //下载大文件
-    public void doDownLoadBig(String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
+    public void doDownLoadBig(Context context, String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
         ApiService apiService = getService(ApiService.class);
         String newFilePath = DownLoadUtil.create().createFile(downLoadPath) + FileName;
         DownLoadUtil.create().downLoadBig(apiService, context, url, newFilePath, listener);
     }
 
     //下载大文件
-    public void doDownLoadBig(String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
+    public void doDownLoadBig(Context context, String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
         ApiService apiService = getService(ApiService.class);
         String newFilePath = DownLoadUtil.create().createFile(downLoadPath) + DownLoadUtil.create().getFileName(url);
         DownLoadUtil.create().downLoadBig(apiService, context, url, newFilePath, listener);
@@ -233,9 +257,9 @@ public class XRetrofit {
     }
 
 
-    public void doDownLoad(List<String> urlList, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
+    public void doDownLoad(Context context, List<String> urlList, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
         for (String url : urlList) {
-            doDownLoad(url, downLoadPath, listener);
+            doDownLoad(context, url, downLoadPath, listener);
         }
     }
 
@@ -258,9 +282,9 @@ public class XRetrofit {
      * @param urlMap key url
      *               value name
      */
-    public void doDownLoad(Map<String, String> urlMap, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
+    public void doDownLoad(Context context, Map<String, String> urlMap, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
         for (Map.Entry<String, String> entry : urlMap.entrySet()) {
-            doDownLoad(entry.getKey(), downLoadPath, entry.getValue(), listener);
+            doDownLoad(context, entry.getKey(), downLoadPath, entry.getValue(), listener);
         }
     }
 

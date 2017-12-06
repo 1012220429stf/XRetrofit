@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("自定义的dialog");
         String url = baseUrl + "mobile/get?phone=18856907654&key=5778e9d9cf089fc3b093b162036fc0e1";
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .build(baseUrl)
-                .setDialog(progressDialog)
+                .setDialog(MainActivity.this, progressDialog)
                 .doGet(PhoneBean.class, url, new OnRetrofit.OnGetListener<PhoneBean>() {
                     @Override
                     public void onSuccess(PhoneBean phoneBean) {
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     //get请求
     public void btnQuery(View view) {
         String url = baseUrl + "mobile/get";
-        XRetrofit.create(MainActivity.this)
+        XRetrofit.create()
                 .build(baseUrl)
                 .doGet(PhoneBean.class, url, new OnRetrofit.OnQueryMapListener<PhoneBean>() {
                     @Override
@@ -80,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
         map.put("Authorization", "jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJVaWQiOiIxMjMxMjMxMjMiLCJBY2NvdW50IjoiYWRtaW4ifQ.rJmKVPGm781oMWUrU2HGnTSE7q4JQ63iQ8e5XpAzDi8");
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .addHeard(map)
                 .build("http://192.168.1.121/")
-                .hideDialog()
+                .isShowDialog(MainActivity.this, true)
                 .doPost(PhoneBean.class, "bother/call/can", new OnRetrofit.OnQueryMapListener<PhoneBean>() {
                     @Override
                     public void onMap(Map<String, String> map) {
@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg", "1.jpg");
         map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg", "2.jpg");
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .build(baseUrl)
-                .doDownLoad("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
+                .doDownLoad(MainActivity.this, "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
                         "1234",
                         "1.jpg",
                         new OnRetrofit.OnDownLoadListener() {
@@ -144,9 +144,9 @@ public class MainActivity extends AppCompatActivity {
 
     //下载大文件
     public void btnDownBig(View view) {
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .build(baseUrl)
-                .doDownLoadBig(url,
+                .doDownLoadBig(MainActivity.this, url,
                         "1234", "大文件.jpg", new OnRetrofit.OnDownLoadListener() {
                             @Override
                             public void onSuccess(int terms) {
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 暂定下载
     public void btnDownBigStop(View view) {
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .stopDown(url);
 
     }
@@ -176,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
     public void addHeard(View view) {
         HashMap<String, String> map = new HashMap<>();
         map.put("ip", "192.168.1.108");
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .addHeard(map)
                 .build(baseUrl)
-                .doDownLoadBig(url,
+                .doDownLoadBig(MainActivity.this, url,
                         "1234", "大文件.jpg", new OnRetrofit.OnDownLoadListener() {
                             @Override
                             public void onSuccess(int terms) {
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void upLoad(View view) {
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .build(baseUrl)
                 .upLoad(PhoneBean.class, "http://192.168.1.121/log/file/upload", new OnRetrofit.OnUpLoadListener<PhoneBean>() {
                     @Override
