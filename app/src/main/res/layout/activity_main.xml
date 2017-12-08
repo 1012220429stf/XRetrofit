@@ -8,19 +8,13 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="btnYS"
+        android:onClick="btn_get"
         android:text="get请求  不需要拼接url" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="btnQuery"
-        android:text="get请求  需要拼接url" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="btnPath"
+        android:onClick="btn_post"
         android:text="POST请求" />
 
 
@@ -49,15 +43,16 @@
     </LinearLayout>
 
     <Button
-        android:text="添加请求头"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="addHeard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:text="添加请求头" />
+
     <Button
-        android:text="上传文件"
-        android:onClick="upLoad"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:onClick="upLoad"
+        android:text="上传文件" />
 
 
 </LinearLayout>

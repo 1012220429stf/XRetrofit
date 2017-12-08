@@ -11,6 +11,7 @@ import android.content.Context;
 public class WaitDialogUtil {
 
     private Dialog dialog;
+    private ProgressDialog waitingDialog;
 
     public void setDialog(Dialog dialog) {
         this.dialog = dialog;
@@ -36,18 +37,29 @@ public class WaitDialogUtil {
 
     public void show(Context context) {
         if (dialog != null) {
-            dialog.show();
+            if (!dialog.isShowing())
+                dialog.show();
         } else {
-            ProgressDialog waitingDialog = new ProgressDialog(context);
+            waitingDialog = new ProgressDialog(context);
             dialog = waitingDialog;
             waitingDialog.setMessage("正在加载数据...");
-            waitingDialog.show();
+            if (!waitingDialog.isShowing()) {
+                waitingDialog.show();
+            }
         }
     }
 
     public void hide() {
         if (dialog != null && dialog.isShowing()) {
             dialog.hide();
+            dialog.dismiss();
+            dialog = null;
+        }
+
+        if (waitingDialog != null) {
+            waitingDialog.hide();
+            waitingDialog.dismiss();
+            waitingDialog = null;
         }
     }
 }
