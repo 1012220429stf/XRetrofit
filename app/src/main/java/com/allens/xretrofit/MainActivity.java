@@ -23,6 +23,17 @@ public class MainActivity extends AppCompatActivity {
 
     private String baseUrl = "http://apis.juhe.cn/";
 
+
+    List<String> urlList = Arrays.asList("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
+            "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2701408155,2184514200&fm=27&gp=0.jpg",
+            "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg");
+
+
+    private HashMap<String, String> map = new HashMap<>();
+    //        map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg","1.jpg");
+//        map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg","2.jpg");
+    private String imgUrl = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     //get请求
     public void btn_get(View view) {
-//        ProgressDialog progressDialog = new ProgressDialog(this);
-//        progressDialog.setMessage("自定义的dialog");
         String url = baseUrl + "mobile/get?phone=18856907654&key=5778e9d9cf089fc3b093b162036fc0e1";
         XRetrofit.create()
+                .build(baseUrl)
+                .isShowDialog(false)
                 .doGet(MainActivity.this, PhoneBean.class, url, new OnRetrofit.OnQueryMapListener<PhoneBean>() {
                     @Override
                     public void onMap(Map<String, String> map) {
@@ -58,8 +69,12 @@ public class MainActivity extends AppCompatActivity {
 
     //post 请求
     public void btn_post(View view) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("自定义的dialog");
         XRetrofit.create()
-                .doPost(MainActivity.this, PhoneBean.class, baseUrl, "mobile/get", new OnRetrofit.OnQueryMapListener<PhoneBean>() {
+                .setDialog(progressDialog)
+                .build(baseUrl)
+                .doPost(MainActivity.this, PhoneBean.class, "mobile/get", new OnRetrofit.OnQueryMapListener<PhoneBean>() {
                     @Override
                     public void onMap(Map<String, String> map) {
                         map.put("phone", "18856907654");
@@ -79,40 +94,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//
-//    // 下载文件
-//    public void btnPostFile(View view) {
-//        List<String> urlList = Arrays.asList("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
-//                "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2701408155,2184514200&fm=27&gp=0.jpg",
-//                "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg");
-//
-//        HashMap<String, String> map = new HashMap<>();
-//        map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg", "1.jpg");
-//        map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg", "2.jpg");
-//        XRetrofit.create()
-//                .build(baseUrl)
-//                .doDownLoad(MainActivity.this, "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
-//                        "1234",
-//                        "1.jpg",
-//                        new OnRetrofit.OnDownLoadListener() {
-//                            @Override
-//                            public void onSuccess(int terms) {
-//                                Log.e("TAG", "TERMS---->" + terms);
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                Logger.e("e----->" + e.getMessage());
-//                            }
-//
-//                            @Override
-//                            public void hasDown(String path) {
-//                                Logger.e("path---->" + path);
-//                            }
-//                        });
-//    }
-//
-//    private String url = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg";
+
+    // 下载文件
+    public void btn_downFile(View view) {
+        XRetrofit.create()
+                .build(baseUrl)
+                .doDownLoad(imgUrl,
+                        "1234",
+                        "1.jpg",
+                        new OnRetrofit.OnDownLoadListener() {
+                            @Override
+                            public void onSuccess(int terms) {
+                                Log.e("TAG", "TERMS---->" + terms);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Logger.e("e----->" + e.getMessage());
+                            }
+
+                        });
+    }
 //
 //    private String imgUrl = "http://sw.bos.baidu.com/sw-search-sp/software/ca7bd0d4676bc/xmind-8-3.7.5-macosx.dmg";
 //

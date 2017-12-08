@@ -2,11 +2,14 @@ package com.allens.lib_retrofit;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 
 import com.allens.lib_retrofit.impl.ApiService;
 import com.allens.lib_retrofit.impl.OnRetrofit;
 import com.allens.lib_retrofit.observer.MyObserver;
+import com.allens.lib_retrofit.util.DownLoadUtil;
 import com.allens.lib_retrofit.util.HttpManager;
+import com.allens.lib_retrofit.util.XDialogUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class XRetrofit {
     private static XRetrofit mInstance;
+    private ApiService apiService;
 
     private XRetrofit() {
     }
@@ -34,9 +38,29 @@ public class XRetrofit {
     }
 
 
+    public XRetrofit build(String BaseUrl) {
+        XDialogUtil.create().setShow(true); // 默认显示Dialog
+        apiService = HttpManager.create().build(BaseUrl).getService(ApiService.class);
+        return this;
+    }
+
+
     //添加请求头
     public XRetrofit addHeard(Map<String, String> heardMap) {
         HttpManager.create().addHeard(heardMap);
+        return this;
+    }
+
+    public XRetrofit isShowDialog(boolean isShow) {
+        XDialogUtil.create().setShow(isShow);
+        return this;
+    }
+
+
+    //显示自定义dialog
+    public XRetrofit setDialog(Dialog dialog) {
+        XDialogUtil.create().setShow(true);
+        XDialogUtil.create().setDialog(dialog);
         return this;
     }
 
@@ -59,9 +83,7 @@ public class XRetrofit {
                 Url += "?" + param;
             }
         }
-        HttpManager.create()
-                .build("http://apis.juhe.cn/")
-                .getService(ApiService.class)
+        apiService
                 .getGetData(Url)
                 .subscribeOn(Schedulers.io())//在子线程取数据
                 .unsubscribeOn(Schedulers.io())
@@ -73,19 +95,16 @@ public class XRetrofit {
     /**
      * @param activity
      * @param tClass
-     * @param baseUrl  如 http://apis.juhe.cn/
      * @param UrlPath  如 bother/call/can
      * @param listener
      * @Author create on 2017/12/8 下午4:37 by Allens
      * @Description
      * @Return void
      */
-    public <T> void doPost(Activity activity, final Class<T> tClass, String baseUrl, String UrlPath, final OnRetrofit.OnQueryMapListener<T> listener) {
+    public <T> void doPost(Activity activity, final Class<T> tClass, String UrlPath, final OnRetrofit.OnQueryMapListener<T> listener) {
         HashMap<String, String> map = new HashMap<>();
         listener.onMap(map);
-        HttpManager.create()
-                .build(baseUrl)
-                .getService(ApiService.class)
+        apiService
                 .getPostData(UrlPath, map)
                 .subscribeOn(Schedulers.io())//在子线程取数据
                 .unsubscribeOn(Schedulers.io())
@@ -94,53 +113,23 @@ public class XRetrofit {
     }
 
 
-//
-//    //显示自定义dialog
-//    public XRetrofit setDialog(Activity activity, Dialog dialog) {
-//        this.activity = activity;
-//        WaitDialogUtil.create().setDialog(dialog);
-//        isShowDialog = true;
-//        return this;
-//    }
-//
-//    //显示自定义dialog
-//    public XRetrofit setDialog(Fragment fragment, Dialog dialog) {
-//        this.activity = fragment.getActivity();
-//        WaitDialogUtil.create().setDialog(dialog);
-//        isShowDialog = true;
-//        return this;
-//    }
-//
-//
-//    public XRetrofit isShowDialog(Activity activity, boolean isShow) {
-//        this.activity = activity;
-//        isShowDialog = isShow;
-//        return this;
-//    }
-//
-//    public XRetrofit isShowDialog(Fragment fragment, boolean isShow) {
-//        this.activity = fragment.getActivity();
-//        isShowDialog = isShow;
-//        return this;
-//    }
-//
+    /**
+     * @param url          下载地址
+     * @param downLoadPath 下载路径
+     * @param FileName     下载的文件名
+     * @param listener
+     * @Author create on 2017/12/8 下午5:38 by Allens
+     * @Description
+     * @Return void
+     */
+    public void doDownLoad(String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
+        apiService.downloadFile(url)
+                .subscribeOn(Schedulers.io())//在子线程取数据
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(MyObserver.create().createDownLoadObserver(downLoadPath, FileName, listener));
+    }
 
 
-//
-//    //文件名 自己定义
-//    public void doDownLoad(Context context, String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
-//        Boolean isAlready = DownLoadUtil.create().isAlreadyDownLoadFromFileName(downLoadPath, FileName);
-//        if (isAlready) {
-//            listener.hasDown(DownLoadUtil.create().createFile(downLoadPath) + FileName);
-//        } else {
-//            ApiService apiService = getService(ApiService.class);
-//            apiService.downloadFile(url)
-//                    .subscribeOn(Schedulers.io())//在子线程取数据
-//                    .unsubscribeOn(Schedulers.io())
-//                    .subscribe(MyObserver.create().createDownLoadObserver(context, downLoadPath, FileName, listener));
-//        }
-//    }
-//
 //    //文件名 是下载时候的文件名
 //    public void doDownLoad(Context context, String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
 //        Boolean isAlready = DownLoadUtil.create().isAlreadyDownLoadFromUrl(downLoadPath, url);

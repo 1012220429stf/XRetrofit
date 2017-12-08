@@ -11,13 +11,6 @@ import java.util.Map;
 
 public interface OnRetrofit {
 
-    interface OnGetListener<T> {
-
-        void onSuccess(T t);
-
-        void onError(Throwable e);
-    }
-
     interface OnQueryMapListener<T> {
 
         void onMap(Map<String, String> map);
@@ -34,7 +27,7 @@ public interface OnRetrofit {
 
         void onError(Throwable e);
 
-        void hasDown(String path);
+//        void hasDown(String path);
     }
 
     interface OnUpLoadListener<T> {

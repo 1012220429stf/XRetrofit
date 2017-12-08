@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
 
+import com.allens.lib_retrofit.XRetrofitApp;
 import com.allens.lib_retrofit.impl.ApiService;
 import com.allens.lib_retrofit.impl.OnRetrofit;
 
@@ -35,7 +36,7 @@ public class DownLoadUtil {
 
 
     private static DownLoadUtil mInstance;
-    private Context context;
+    //    private Context context;
     private String filePath;//下载文件的路径
     private String TAG_CurrentLength = "CurrentLength";
 
@@ -50,14 +51,11 @@ public class DownLoadUtil {
 
 
     //下载小文件
-    public synchronized void downLoad(ResponseBody responseBody, Context context, String filepath, final OnRetrofit.OnDownLoadListener listener) {
-        this.context = context;
+    public synchronized void downLoad(ResponseBody responseBody, String filepath, final OnRetrofit.OnDownLoadListener listener) {
         this.filePath = filepath;
-
         FileOutputStream fos = null;
         InputStream inputStream = responseBody.byteStream();
         long length = responseBody.contentLength();// 流的大小
-//        com.orhanobut.logger.Logger.e("length---->" + length);
         try {
             fos = new FileOutputStream(filepath, true);
             int n = 0;
@@ -81,7 +79,7 @@ public class DownLoadUtil {
 
     //下载大文件
     public synchronized void downLoadBig(ApiService apiService, final Context context, final String url, final String filePath, final OnRetrofit.OnDownLoadListener listener) {
-        this.context = context;
+//        this.context = context;
         this.filePath = filePath;
         startDown(url);//初始化 修改状态 为下载
         final Long readLength = ShareUtil.create(context).getLong(TAG_CurrentLength, (long) 0);
@@ -149,17 +147,17 @@ public class DownLoadUtil {
 
     //停止下载
     public void stopDown(String urlKey) {
-        ShareUtil.create(context).putBoolean(urlKey, true);
+        ShareUtil.create(XRetrofitApp.getApplication()).putBoolean(urlKey, true);
     }
 
     private void startDown(String urlKey) {
-        ShareUtil.create(context).putBoolean(urlKey, false);
+        ShareUtil.create(XRetrofitApp.getApplication()).putBoolean(urlKey, false);
     }
 
 
     //判断是否需要停止下载   true  就是要停止下载
     private boolean isStopDown(String urlKey) {
-        return ShareUtil.create(context).getBoolean(urlKey, false);
+        return ShareUtil.create(XRetrofitApp.getApplication()).getBoolean(urlKey, false);
     }
 
 
@@ -195,7 +193,7 @@ public class DownLoadUtil {
                     public void accept(Integer integer) throws Exception {
                         listener.onSuccess(integer);
                         if (integer == 100) {
-                            ShareUtil.create(context).clear();
+                            ShareUtil.create(XRetrofitApp.getApplication()).clear();
                             isAPK();
                         }
                     }
@@ -208,7 +206,7 @@ public class DownLoadUtil {
         if (file.getName().endsWith(".apk")) {
             Uri uri;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", file);//通过FileProvider创建一个content类型的Uri
+                uri = FileProvider.getUriForFile(XRetrofitApp.getApplication(), XRetrofitApp.getApplication().getPackageName() + ".provider", file);//通过FileProvider创建一个content类型的Uri
             } else {
                 uri = Uri.fromFile(file);
             }
@@ -219,7 +217,7 @@ public class DownLoadUtil {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(android.content.Intent.ACTION_VIEW);
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
-            context.startActivity(intent);
+            XRetrofitApp.getApplication().startActivity(intent);
         }
     }
 

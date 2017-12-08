@@ -3,7 +3,6 @@ package com.allens.lib_retrofit.util;
 import com.allens.lib_retrofit.XRetrofitApp;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -32,12 +31,10 @@ public class HttpManager {
         return mInstance;
     }
 
-
     public HttpManager build(String baseUrl) {
         Retrofit.Builder builder = new Retrofit.Builder();
         retrofit = builder
                 .client(createOKHttpClient())
-//                .addConverterFactory(GsonConverterFactory.create()) //Gson解析器
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // 支持RxJava
                 .baseUrl(baseUrl)
                 .build();
@@ -49,8 +46,7 @@ public class HttpManager {
         if (XRetrofitApp.isDebug())
             builder.addInterceptor(InterceptorUtil.LogInterceptor());//添加拦截
         if (headMap != null && headMap.size() > 0)
-            builder.addInterceptor(InterceptorUtil.HeaderInterceptor(headMap));
-
+            builder.addInterceptor(InterceptorUtil.HeaderInterceptor(headMap));//添加请求头
         return builder
                 .readTimeout(XRetrofitApp.getReadTimeout(), TimeUnit.SECONDS)//设置读取超时时间
                 .writeTimeout(XRetrofitApp.getWriteTimeout(), TimeUnit.SECONDS)//设置写的超时时间
@@ -60,7 +56,6 @@ public class HttpManager {
     }
 
     //拼接URL
-
     public String prepareParam(Map<String, String> paramMap) {
         StringBuilder sb = new StringBuilder();
         if (paramMap.isEmpty()) {
@@ -84,6 +79,7 @@ public class HttpManager {
         return retrofit.create(tClass);
     }
 
+    //添加请求头
     public void addHeard(Map<String, String> heardMap) {
         this.headMap = heardMap;
     }

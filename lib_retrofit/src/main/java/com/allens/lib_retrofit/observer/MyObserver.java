@@ -2,9 +2,9 @@ package com.allens.lib_retrofit.observer;
 
 import android.app.Activity;
 
-import com.allens.lib_retrofit.XRetrofitApp;
 import com.allens.lib_retrofit.impl.OnRetrofit;
-import com.allens.lib_retrofit.util.WaitDialogUtil;
+import com.allens.lib_retrofit.util.DownLoadUtil;
+import com.allens.lib_retrofit.util.XDialogUtil;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -23,10 +23,7 @@ public class MyObserver {
         return new MyObserver();
     }
 
-//    protected Observer<? super ResponseBody> createDownLoadObserver(final Context context,
-//                                                                    final String downLoadPath,
-//                                                                    final OnRetrofit.OnDownLoadListener listener,
-//                                                                    final String url) {
+//    public Observer<? super ResponseBody> createDownLoadObserver(final String downLoadPath, final OnRetrofit.OnDownLoadListener listener, final String url) {
 //        return new Observer<ResponseBody>() {
 //            @Override
 //            public void onSubscribe(Disposable d) {
@@ -35,31 +32,61 @@ public class MyObserver {
 //
 //            @Override
 //            public void onNext(ResponseBody responseBody) {
-//                WaitDialogUtil.create().hide();
 //                String filePath = DownLoadUtil.create().createFile(downLoadPath);
 //                String newFilePath = filePath + DownLoadUtil.create().getFileName(url);
-//                DownLoadUtil.create().downLoad(responseBody, context, newFilePath, listener);
+//                DownLoadUtil.create().downLoad(responseBody, newFilePath, listener);
 //            }
 //
 //            @Override
 //            public void onError(Throwable e) {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //                DownLoadUtil.create().handlerFailed(e, listener);
 //            }
 //
 //            @Override
 //            public void onComplete() {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //            }
 //        };
 //    }
+
+
+    public Observer<ResponseBody> createDownLoadObserver(
+            final String downLoadPath,
+            final String fileName,
+            final OnRetrofit.OnDownLoadListener listener) {
+        return new Observer<ResponseBody>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                String filePath = DownLoadUtil.create().createFile(downLoadPath);
+                String newFilePath = filePath + fileName;
+                DownLoadUtil.create().downLoad(responseBody, newFilePath, listener);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                DownLoadUtil.create().handlerFailed(e, listener);
+                XDialogUtil.create().hide();
+            }
+
+            @Override
+            public void onComplete() {
+                XDialogUtil.create().hide();
+            }
+        };
+    }
 
 
     public <T> Observer<? super ResponseBody> getObserver(final Activity activity, final Class<T> tClass, final OnRetrofit.OnQueryMapListener<T> listener) {
         return new Observer<ResponseBody>() {
             @Override
             public void onSubscribe(Disposable d) {
-                WaitDialogUtil.create().show(activity);
+                XDialogUtil.create().show(activity);
             }
 
             @Override
@@ -80,7 +107,7 @@ public class MyObserver {
 
             @Override
             public void onComplete() {
-                WaitDialogUtil.create().hide();
+                XDialogUtil.create().hide();
             }
         };
     }
@@ -94,7 +121,7 @@ public class MyObserver {
 //
 //            @Override
 //            public void onNext(ResponseBody responseBody) {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //                try {
 //                    Gson gson = new Gson();
 //                    T t = gson.fromJson(responseBody.string(), tClass);
@@ -106,46 +133,17 @@ public class MyObserver {
 //
 //            @Override
 //            public void onError(Throwable e) {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //                listener.onError(e);
 //            }
 //
 //            @Override
 //            public void onComplete() {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //            }
 //        };
 //    }
 
-
-//    protected Observer<ResponseBody> createDownLoadObserver(final Context context,
-//                                                            final String downLoadPath, final String fileName,
-//                                                            final OnRetrofit.OnDownLoadListener listener) {
-//        return new Observer<ResponseBody>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(ResponseBody responseBody) {
-//                String filePath = DownLoadUtil.create().createFile(downLoadPath);
-//                String newFilePath = filePath + fileName;
-//                DownLoadUtil.create().downLoad(responseBody, context, newFilePath, listener);
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                DownLoadUtil.create().handlerFailed(e, listener);
-//                WaitDialogUtil.create().hide();
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//                WaitDialogUtil.create().hide();
-//            }
-//        };
-//    }
 
 //    public <T> Observer<? super ResponseBody> createUpLoad(final Class<T> tClass, final OnRetrofit.OnUpLoadListener<T> listener) {
 //
@@ -157,7 +155,7 @@ public class MyObserver {
 //
 //            @Override
 //            public void onNext(ResponseBody responseBody) {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //                try {
 //                    Gson gson = new Gson();
 //                    T t = gson.fromJson(responseBody.string(), tClass);
@@ -169,13 +167,13 @@ public class MyObserver {
 //
 //            @Override
 //            public void onError(Throwable e) {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //                listener.onError(e);
 //            }
 //
 //            @Override
 //            public void onComplete() {
-//                WaitDialogUtil.create().hide();
+//                XDialogUtil.create().hide();
 //            }
 //        };
 //    }

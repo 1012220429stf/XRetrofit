@@ -8,38 +8,35 @@ import android.content.Context;
  * Created by allens on 2017/11/30.
  */
 
-public class WaitDialogUtil {
+public class XDialogUtil {
 
     private Dialog dialog;
     private ProgressDialog waitingDialog;
+
+    private Boolean isShow;
 
     public void setDialog(Dialog dialog) {
         this.dialog = dialog;
     }
 
+    private static XDialogUtil dialogUtil;
 
-    private WaitDialogUtil() {
-
-    }
-
-    private static WaitDialogUtil newIntance;
-
-    public static WaitDialogUtil create() {
-        if (newIntance == null) {
-            synchronized (WaitDialogUtil.class) {
-                if (newIntance == null) {
-                    newIntance = new WaitDialogUtil();
+    public static XDialogUtil create() {
+        if (dialogUtil == null) {
+            synchronized (XDialogUtil.class) {
+                if (dialogUtil == null) {
+                    dialogUtil = new XDialogUtil();
                 }
             }
         }
-        return newIntance;
+        return dialogUtil;
     }
 
     public void show(Context context) {
-        if (dialog != null) {
+        if (dialog != null && isShow) {
             if (!dialog.isShowing())
                 dialog.show();
-        } else {
+        } else if (dialog == null && isShow) {
             waitingDialog = new ProgressDialog(context);
             dialog = waitingDialog;
             waitingDialog.setMessage("正在加载数据...");
@@ -61,5 +58,14 @@ public class WaitDialogUtil {
             waitingDialog.dismiss();
             waitingDialog = null;
         }
+    }
+
+
+    public Boolean getShow() {
+        return isShow;
+    }
+
+    public void setShow(Boolean show) {
+        isShow = show;
     }
 }
