@@ -95,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // 下载文件
-    public void btn_downFile(View view) {
+    // 下载文件  自定义文件名
+    public void btn_downFileFromName(View view) {
         XRetrofit.create()
                 .build(baseUrl)
                 .doDownLoad(imgUrl,
@@ -112,8 +112,25 @@ public class MainActivity extends AppCompatActivity {
                             public void onError(Throwable e) {
                                 Logger.e("e----->" + e.getMessage());
                             }
-
                         });
+
+    }
+
+    // 下载文件
+    public void btn_downFileFromUrl(View view) {
+        XRetrofit.create()
+                .build(baseUrl)
+                .doDownLoad(imgUrl, "1234", new OnRetrofit.OnDownLoadListener() {
+                    @Override
+                    public void onSuccess(int terms) {
+                        Log.e("TAG", "TERMS---->" + terms);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.e("e----->" + e.getMessage());
+                    }
+                });
     }
 //
 //    private String imgUrl = "http://sw.bos.baidu.com/sw-search-sp/software/ca7bd0d4676bc/xmind-8-3.7.5-macosx.dmg";

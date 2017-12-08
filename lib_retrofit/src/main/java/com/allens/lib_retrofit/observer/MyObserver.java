@@ -1,6 +1,7 @@
 package com.allens.lib_retrofit.observer;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.allens.lib_retrofit.impl.OnRetrofit;
 import com.allens.lib_retrofit.util.DownLoadUtil;
@@ -23,37 +24,9 @@ public class MyObserver {
         return new MyObserver();
     }
 
-//    public Observer<? super ResponseBody> createDownLoadObserver(final String downLoadPath, final OnRetrofit.OnDownLoadListener listener, final String url) {
-//        return new Observer<ResponseBody>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(ResponseBody responseBody) {
-//                String filePath = DownLoadUtil.create().createFile(downLoadPath);
-//                String newFilePath = filePath + DownLoadUtil.create().getFileName(url);
-//                DownLoadUtil.create().downLoad(responseBody, newFilePath, listener);
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                XDialogUtil.create().hide();
-//                DownLoadUtil.create().handlerFailed(e, listener);
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//                XDialogUtil.create().hide();
-//            }
-//        };
-//    }
-
-
     public Observer<ResponseBody> createDownLoadObserver(
             final String downLoadPath,
-            final String fileName,
+            final String fileNameOrUrl,
             final OnRetrofit.OnDownLoadListener listener) {
         return new Observer<ResponseBody>() {
             @Override
@@ -63,20 +36,29 @@ public class MyObserver {
 
             @Override
             public void onNext(ResponseBody responseBody) {
+                String newFilePath = null;
                 String filePath = DownLoadUtil.create().createFile(downLoadPath);
-                String newFilePath = filePath + fileName;
+//                https|http|ftp|rtsp|mms
+                if (fileNameOrUrl.contains("https://")
+                        || fileNameOrUrl.contains("http://")
+                        || fileNameOrUrl.contains("ftp://")
+                        || fileNameOrUrl.contains("rtsp://")
+                        || fileNameOrUrl.contains("mms://")
+                        ) {
+                    newFilePath = filePath + DownLoadUtil.create().getFileName(fileNameOrUrl);
+                } else {
+                    newFilePath = filePath + fileNameOrUrl;
+                }
                 DownLoadUtil.create().downLoad(responseBody, newFilePath, listener);
             }
 
             @Override
             public void onError(Throwable e) {
                 DownLoadUtil.create().handlerFailed(e, listener);
-                XDialogUtil.create().hide();
             }
 
             @Override
             public void onComplete() {
-                XDialogUtil.create().hide();
             }
         };
     }

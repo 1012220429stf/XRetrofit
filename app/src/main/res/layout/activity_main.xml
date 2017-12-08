@@ -21,8 +21,14 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="btn_downFile"
-        android:text="下载小文件" />
+        android:onClick="btn_downFileFromName"
+        android:text="下载小文件  自定义名字" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="btn_downFileFromUrl"
+        android:text="下载小文件  网络获取名字" />
 
     <LinearLayout
         android:layout_width="match_parent"

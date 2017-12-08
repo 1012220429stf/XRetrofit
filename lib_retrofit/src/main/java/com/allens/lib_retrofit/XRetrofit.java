@@ -115,8 +115,8 @@ public class XRetrofit {
 
     /**
      * @param url          下载地址
-     * @param downLoadPath 下载路径
-     * @param FileName     下载的文件名
+     * @param downLoadPath 下载路径  1234
+     * @param FileName     下载的文件名  1234.jpg
      * @param listener
      * @Author create on 2017/12/8 下午5:38 by Allens
      * @Description
@@ -130,19 +130,20 @@ public class XRetrofit {
     }
 
 
-//    //文件名 是下载时候的文件名
-//    public void doDownLoad(Context context, String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
-//        Boolean isAlready = DownLoadUtil.create().isAlreadyDownLoadFromUrl(downLoadPath, url);
-//        if (isAlready) {
-//            listener.hasDown(DownLoadUtil.create().createFile(downLoadPath) + DownLoadUtil.create().getFileName(url));
-//        } else {
-//            ApiService apiService = getService(ApiService.class);
-//            apiService.downloadFile(url)
-//                    .subscribeOn(Schedulers.io())//在子线程取数据
-//                    .unsubscribeOn(Schedulers.io())
-//                    .subscribe(MyObserver.create().createDownLoadObserver(context, downLoadPath, listener, url));
-//        }
-//    }
+    /**
+     * @param url
+     * @param downLoadPath
+     * @param listener
+     * @Author create on 2017/12/8 下午6:05 by Allens
+     * @Description 文件名 是下载时候的文件名
+     * @Return void
+     */
+    public void doDownLoad(String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
+        apiService.downloadFile(url)
+                .subscribeOn(Schedulers.io())//在子线程取数据
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(MyObserver.create().createDownLoadObserver(downLoadPath, url, listener));
+    }
 //
 //    //下载大文件
 //    public void doDownLoadBig(Context context, String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
