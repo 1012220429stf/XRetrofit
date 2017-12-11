@@ -9,13 +9,17 @@ import com.allens.lib_retrofit.impl.OnRetrofit;
 import com.allens.lib_retrofit.observer.MyObserver;
 import com.allens.lib_retrofit.util.DownLoadUtil;
 import com.allens.lib_retrofit.util.HttpManager;
+import com.allens.lib_retrofit.util.UpLoadUtil;
 import com.allens.lib_retrofit.util.XDialogUtil;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MultipartBody;
 
 /**
  * Created by allens on 2017/11/29.
@@ -144,60 +148,57 @@ public class XRetrofit {
                 .unsubscribeOn(Schedulers.io())
                 .subscribe(MyObserver.create().createDownLoadObserver(downLoadPath, url, listener));
     }
-//
-//    //下载大文件
-//    public void doDownLoadBig(Context context, String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
-//        ApiService apiService = getService(ApiService.class);
-//        String newFilePath = DownLoadUtil.create().createFile(downLoadPath) + FileName;
-//        DownLoadUtil.create().downLoadBig(apiService, context, url, newFilePath, listener);
-//    }
-//
-//    //下载大文件
-//    public void doDownLoadBig(Context context, String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
-//        ApiService apiService = getService(ApiService.class);
-//        String newFilePath = DownLoadUtil.create().createFile(downLoadPath) + DownLoadUtil.create().getFileName(url);
-//        DownLoadUtil.create().downLoadBig(apiService, context, url, newFilePath, listener);
-//    }
-//
-//    public void stopDown(String urlKey) {
-//        DownLoadUtil.create().stopDown(urlKey);
-//    }
-//
-//
-//    public void doDownLoad(Context context, List<String> urlList, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
-//        for (String url : urlList) {
-//            doDownLoad(context, url, downLoadPath, listener);
-//        }
-//    }
-//
-//
-//    public <T> void upLoad(Class<T> tClass, String url, OnRetrofit.OnUpLoadListener<T> listener) {
-//        HashMap<String, String> FormDataPartMap = new HashMap<>();
-//        ArrayList<File> fileArrayList = new ArrayList<>();
-//        listener.onFormDataPartMap(FormDataPartMap);
-//        listener.onFileList(fileArrayList);
-//        ApiService apiService = getService(ApiService.class);
-//        MultipartBody multipartBody = UpLoadUtil.create()
-//                .createMultipartBody(FormDataPartMap, fileArrayList);
-//        apiService.upLoad(url, multipartBody)
-//                .subscribeOn(Schedulers.io())//在子线程取数据
-//                .unsubscribeOn(Schedulers.io())
-//                .subscribe(MyObserver.create().createUpLoad(tClass, listener));
-//    }
-//
-//    /**
-//     * @param urlMap key url
-//     *               value name
-//     */
-//    public void doDownLoad(Context context, Map<String, String> urlMap, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
-//        for (Map.Entry<String, String> entry : urlMap.entrySet()) {
-//            doDownLoad(context, entry.getKey(), downLoadPath, entry.getValue(), listener);
-//        }
-//    }
-//
-//
 
-//
+
+    /**
+     * @param url          下载地址
+     * @param downLoadPath 下载路径  1234
+     * @param FileName     下载的文件名  1234.jpg
+     * @param listener
+     * @Author create on 2017/12/8 下午6:37 by Allens
+     * @Description 下载大文件
+     * @Return void
+     */
+    public void doDownLoadBig(String url, String downLoadPath, String FileName, OnRetrofit.OnDownLoadListener listener) {
+        String newFilePath = DownLoadUtil.create().createFile(downLoadPath) + FileName;
+        DownLoadUtil.create().downLoadBig(apiService, url, newFilePath, listener);
+    }
+
+    /**
+     * @param url          下载地址
+     * @param downLoadPath 下载路径  1234
+     * @param listener
+     * @Author create on 2017/12/11 上午9:40 by Allens
+     * @Description
+     * @Return void
+     */
+    public void doDownLoadBig(String url, String downLoadPath, OnRetrofit.OnDownLoadListener listener) {
+        String newFilePath = DownLoadUtil.create().createFile(downLoadPath) + DownLoadUtil.create().getFileName(url);
+        DownLoadUtil.create().downLoadBig(apiService, url, newFilePath, listener);
+    }
+
+    /**
+     * @param urlKey
+     * @Author create on 2017/12/11 上午9:42 by Allens
+     * @Description
+     * @Return void
+     */
+    public void stopDown(String urlKey) {
+        DownLoadUtil.create().stopDown(urlKey);
+    }
+
+
+    public <T> void doUpLoad(Class<T> tClass, String url, OnRetrofit.OnUpLoadListener<T> listener) {
+        HashMap<String, String> FormDataPartMap = new HashMap<>();
+        ArrayList<File> fileArrayList = new ArrayList<>();
+        listener.onFormDataPartMap(FormDataPartMap);
+        listener.onFileList(fileArrayList);
+        MultipartBody multipartBody = UpLoadUtil.create().createMultipartBody(FormDataPartMap, fileArrayList);
+        apiService.upLoad(url, multipartBody)
+                .subscribeOn(Schedulers.io())//在子线程取数据
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(MyObserver.create().createUpLoad(tClass, listener));
+    }
 
 
 }

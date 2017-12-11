@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
 
+import com.allens.lib_retrofit.XRetrofit;
 import com.allens.lib_retrofit.XRetrofitApp;
 import com.allens.lib_retrofit.impl.ApiService;
 import com.allens.lib_retrofit.impl.OnRetrofit;
@@ -36,7 +37,6 @@ public class DownLoadUtil {
 
 
     private static DownLoadUtil mInstance;
-    //    private Context context;
     private String filePath;//下载文件的路径
     private String TAG_CurrentLength = "CurrentLength";
 
@@ -78,12 +78,10 @@ public class DownLoadUtil {
 
 
     //下载大文件
-    public synchronized void downLoadBig(ApiService apiService, final Context context, final String url, final String filePath, final OnRetrofit.OnDownLoadListener listener) {
-//        this.context = context;
+    public synchronized void downLoadBig(ApiService apiService, final String url, final String filePath, final OnRetrofit.OnDownLoadListener listener) {
         this.filePath = filePath;
         startDown(url);//初始化 修改状态 为下载
-        final Long readLength = ShareUtil.create(context).getLong(TAG_CurrentLength, (long) 0);
-//        com.orhanobut.logger.Logger.e("readLength--1111-->" + readLength);
+        final Long readLength = ShareUtil.create(XRetrofitApp.getApplication()).getLong(TAG_CurrentLength, (long) 0);
         Observable<ResponseBody> observable = apiService.downloadFile("bytes=" +
                 readLength +
                 "-", url);
@@ -99,7 +97,6 @@ public class DownLoadUtil {
                     @Override
                     public void onNext(ResponseBody responseBody) {
                         long length = responseBody.contentLength();// 流的大小
-//                        com.orhanobut.logger.Logger.e("length----->" + length);
                         FileOutputStream fos = null;
                         InputStream inputStream = responseBody.byteStream();
                         try {
@@ -108,9 +105,8 @@ public class DownLoadUtil {
                             long currentLength = 0; //当前的长度
                             byte[] buf = new byte[1024 * 4];
                             while ((n = inputStream.read(buf)) != -1) {
-
                                 try {
-                                    Thread.sleep(500);
+                                    Thread.sleep(1000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -118,8 +114,7 @@ public class DownLoadUtil {
                                     break;
                                 fos.write(buf, 0, n);
                                 currentLength += n;
-                                ShareUtil.create(context).putLong(TAG_CurrentLength, currentLength + readLength);
-//                                com.orhanobut.logger.Logger.e("readLength--2222-->" + currentLength);
+                                ShareUtil.create(XRetrofitApp.getApplication()).putLong(TAG_CurrentLength, currentLength + readLength);
                                 final int terms = (int) (((float) (currentLength + readLength)) / (length + readLength) * 100); // 计算百分比
                                 handlerSuccess(terms, listener);
                             }

@@ -132,98 +132,66 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-//
-//    private String imgUrl = "http://sw.bos.baidu.com/sw-search-sp/software/ca7bd0d4676bc/xmind-8-3.7.5-macosx.dmg";
-//
-//    //下载大文件
-//    public void btnDownBig(View view) {
-//        XRetrofit.create()
-//                .build(baseUrl)
-//                .doDownLoadBig(MainActivity.this, url,
-//                        "1234", "大文件.jpg", new OnRetrofit.OnDownLoadListener() {
-//                            @Override
-//                            public void onSuccess(int terms) {
-//                                Log.e("TAG", "TERMS---->" + terms);
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                Logger.e("e----->" + e.getMessage());
-//                            }
-//
-//                            @Override
-//                            public void hasDown(String path) {
-//                                Logger.e("path---->" + path);
-//                            }
-//                        });
-//    }
-//
-//    // 暂定下载
-//    public void btnDownBigStop(View view) {
-//        XRetrofit.create()
-//                .stopDown(url);
-//
-//    }
-//
-//    //添加头部信息
-//    public void addHeard(View view) {
-//        HashMap<String, String> map = new HashMap<>();
-//        map.put("ip", "192.168.1.108");
-//        XRetrofit.create()
-//                .addHeard(map)
-//                .build(baseUrl)
-//                .doDownLoadBig(MainActivity.this, url,
-//                        "1234", "大文件.jpg", new OnRetrofit.OnDownLoadListener() {
-//                            @Override
-//                            public void onSuccess(int terms) {
-//                                Log.e("TAG", "TERMS---->" + terms);
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                Logger.e("e----->" + e.getMessage());
-//                            }
-//
-//                            @Override
-//                            public void hasDown(String path) {
-//                                Logger.e("path---->" + path);
-//                            }
-//                        });
-//    }
-//
-//
-//    public void upLoad(View view) {
-//        XRetrofit.create()
-//                .build(baseUrl)
-//                .upLoad(PhoneBean.class, "http://192.168.1.121/log/file/upload", new OnRetrofit.OnUpLoadListener<PhoneBean>() {
-//                    @Override
-//                    public void onFormDataPartMap(Map<String, String> map) {
-//                        map.put("Data", "2017-11-30");
-//                        map.put("Site", "ZhuZou");
-//                        map.put("User", "test");
-//                        map.put("Name", "gps");
-//                    }
-//
-//                    @Override
-//                    public void onFileList(List<File> fileList) {
-//                        String path = DownLoadUtil.create().createFile("1234") + "1.jpg";
-//                        Logger.e("filepath---====--<" + path);
-//                        File file = new File(path);
-//                        fileList.add(file);
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(PhoneBean phoneBean) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//                });
-//
-//    }
+
+    //下载大文件
+    public void btnDownBig(View view) {
+        XRetrofit.create()
+                .build(baseUrl)
+                .doDownLoadBig(imgUrl,
+                        "1234",
+                        "大文件.jpg",
+                        new OnRetrofit.OnDownLoadListener() {
+                            @Override
+                            public void onSuccess(int terms) {
+                                Log.e("TAG", "TERMS---->" + terms);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Logger.e("e----->" + e.getMessage());
+                            }
+                        });
+    }
+
+    // 暂定下载
+    public void btnDownBigStop(View view) {
+        XRetrofit.create()
+                .stopDown(imgUrl);
+
+    }
+
+    public void upLoad(View view) {
+        XRetrofit.create()
+                .build(baseUrl)
+                .doUpLoad(PhoneBean.class, "http://192.168.1.121/log/file/upload", new OnRetrofit.OnUpLoadListener<PhoneBean>() {
+                    @Override
+                    public void onFormDataPartMap(Map<String, String> map) {
+                        map.put("Data", "2017-11-30");
+                        map.put("Site", "ZhuZou");
+                        map.put("User", "test");
+                        map.put("Name", "gps");
+                    }
+
+                    @Override
+                    public void onFileList(List<File> fileList) {
+                        String path = DownLoadUtil.create().createFile("1234") + "1.jpg";
+                        Logger.e("filepath---====--<" + path);
+                        File file = new File(path);
+                        fileList.add(file);
+                    }
+
+                    @Override
+                    public void onSuccess(PhoneBean phoneBean) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+
+    }
 
 
 }

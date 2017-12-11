@@ -38,7 +38,6 @@ public class MyObserver {
             public void onNext(ResponseBody responseBody) {
                 String newFilePath = null;
                 String filePath = DownLoadUtil.create().createFile(downLoadPath);
-//                https|http|ftp|rtsp|mms
                 if (fileNameOrUrl.contains("https://")
                         || fileNameOrUrl.contains("http://")
                         || fileNameOrUrl.contains("ftp://")
@@ -94,69 +93,34 @@ public class MyObserver {
         };
     }
 
-//    public <T> Observer<ResponseBody> getPostObserver(final Class<T> tClass, final OnRetrofit.OnQueryMapListener<T> listener) {
-//        return new io.reactivex.Observer<ResponseBody>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(ResponseBody responseBody) {
-//                XDialogUtil.create().hide();
-//                try {
-//                    Gson gson = new Gson();
-//                    T t = gson.fromJson(responseBody.string(), tClass);
-//                    listener.onSuccess(t);
-//                } catch (IOException e) {
-//                    listener.onError(e);
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                XDialogUtil.create().hide();
-//                listener.onError(e);
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//                XDialogUtil.create().hide();
-//            }
-//        };
-//    }
 
+    public <T> Observer<? super ResponseBody> createUpLoad(final Class<T> tClass, final OnRetrofit.OnUpLoadListener<T> listener) {
 
-//    public <T> Observer<? super ResponseBody> createUpLoad(final Class<T> tClass, final OnRetrofit.OnUpLoadListener<T> listener) {
-//
-//        return new Observer<ResponseBody>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(ResponseBody responseBody) {
-//                XDialogUtil.create().hide();
-//                try {
-//                    Gson gson = new Gson();
-//                    T t = gson.fromJson(responseBody.string(), tClass);
-//                    listener.onSuccess(t);
-//                } catch (IOException e) {
-//                    listener.onError(e);
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//                XDialogUtil.create().hide();
-//                listener.onError(e);
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//                XDialogUtil.create().hide();
-//            }
-//        };
-//    }
+        return new Observer<ResponseBody>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                try {
+                    Gson gson = new Gson();
+                    T t = gson.fromJson(responseBody.string(), tClass);
+                    listener.onSuccess(t);
+                } catch (IOException e) {
+                    listener.onError(e);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                listener.onError(e);
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        };
+    }
 }
