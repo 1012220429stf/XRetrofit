@@ -105,11 +105,6 @@ public class DownLoadUtil {
                             long currentLength = 0; //当前的长度
                             byte[] buf = new byte[1024 * 4];
                             while ((n = inputStream.read(buf)) != -1) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
                                 if (isStopDown(url))
                                     break;
                                 fos.write(buf, 0, n);

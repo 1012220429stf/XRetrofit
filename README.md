@@ -1,10 +1,7 @@
-# 引用
+# 引用项目
 
+### 在application中的build.gradle中根节点添加地址
 
-### Step 1. Add the JitPack repository to your build file
-
-
-Add it in your root build.gradle at the end of repositories:
 
 ```
 allprojects {
@@ -15,71 +12,153 @@ allprojects {
 	}
 ```
 
-### Step 2. Add the dependency
+### 在module中build.gradle添加
 
 	dependencies {
-	        compile 'com.github.JiangHaiYang01:XRetrofit:1.0.8'
+	       compile 'com.github.JiangHaiYang01:XRetrofit:x.y.z'//引入最新版本即可
 	}
 
 
-
-
-# 介绍
-
- 封装RxJava + Retrofit2 网络请求框架
+  
  
+ # 使用配置
  
- 
- 
- # API 介绍
- 
- 
- 
- ## 配置
- 
- 懒  直接放代码   
- 
-```
-    public XRetrofit seReadTimeout(int readTimeout) {//设置读取超时时间
-        this.readTimeout = readTimeout;
-        return this;
-    }
-
-
-    public XRetrofit setWriteTimeout(int writeTimeout) {//设置写的超时时间
-        this.writeTimeout = writeTimeout;
-        return this;
-    }
-
-    public XRetrofit setConnectTimeout(int timeDefault) {//设置连接超时时间
-        this.connectTimeout = timeDefault;
-        return this;
-    }
-```
- 
- 
- ## GET请求
- 
- #### 第一种 
- 
- url 已经拼接好的 不需要用户自己拼接
- 
- 比如  http://apis.juhe.cn/mobile/get?phone=18856907654&key=5778e9d9cf089fc3b093b162036fc0e1
+ ### 初始化
  
  ```
+ //参数2：debug  true 是debug模式
+  XRetrofitApp.init(this,true);
+```
+ 或者
+ 
+ ```
+XRetrofitApp.init(this);
+```
 
-    public void btnYS(View view) {
+>推荐放在Application 中初始化
+ 
+ ### API
+ 
 
+##### 设置参数
+
+
+可以在Application中 使用一下方法进行配置  
+```
+ XRetrofitApp.setConnectTimeout(10);//设置连接超时时间 默认10
+ XRetrofitApp.setReadTimeout(10);//设置读取超时时间 默认10
+ XRetrofitApp.setWriteTimeout(10);//设置写的超时时间 默认10
+ XRetrofitApp.setLogTag("XRetrofit");//设置debug模式下的LogTag 默认 XRetrofit
+```
+
+
+
+
+##### 是否显示Dialog （ 默认是显示的）
+
+```
+
+  XRetrofit.create()
+                .build(baseUrl)
+                .isShowDialog(false)
+                .doPost()
+                .........
+
+```
+
+
+自定义dialog
+```
+ ProgressDialog progressDialog = new ProgressDialog(this);
+ progressDialog.setMessage("自定义的dialog");
+ XRetrofit.create()
+           .setDialog(progressDialog)
+           .build(baseUrl)
+           .......
+
+```
+
+##### GIT 请求
+
+
+ ```
+
+String baseUrl = "http://apis.juhe.cn/";
+       
+public void btn_get(View view) {
+      String url = baseUrl + "mobile/get?phone=18856901111&key=5778e9d9cf089fc3b093b162036fc0e1";
+      XRetrofit.create()
+               .build(baseUrl)
+               .isShowDialog(false)
+               .doGet(MainActivity.this, PhoneBean.class, url, new OnRetrofit.OnQueryMapListener<PhoneBean>() {
+                       @Override
+                       public void onMap(Map<String, String> map) {
+                            //这里的map 是当需要自己手动去拼接URL 时候使用  
+                            //如下例子所示
+                       }
+   
+                       @Override
+                       public void onSuccess(PhoneBean phoneBean) {
+                           Logger.e("phoneBean---->" + phoneBean.toString());
+                       }
+   
+                       @Override
+                       public void onError(Throwable e) {
+                           Logger.e("e---->" + e.getMessage());
+                       }
+                   });
+       }
+
+
+
+ 
+ //==============================================分割线========================
+
+String baseUrl = "http://apis.juhe.cn/";
+       
+public void btn_get(View view) {
+        XRetrofit.create()
+               .build(baseUrl)
+               .isShowDialog(false)
+               .doGet(MainActivity.this, PhoneBean.class, baseUrl, new OnRetrofit.OnQueryMapListener<PhoneBean>() {
+                       @Override
+                       public void onMap(Map<String, String> map) {
+                            map.put("phone","18856901111");
+                            map.put("key","5778e9d9cf089fc3b093b162036fc0e1");
+                       }
+   
+                       @Override
+                       public void onSuccess(PhoneBean phoneBean) {
+                           Logger.e("phoneBean---->" + phoneBean.toString());
+                       }
+   
+                       @Override
+                       public void onError(Throwable e) {
+                           Logger.e("e---->" + e.getMessage());
+                       }
+                   });
+       }
+```
+
+
+##### POST请求
+ 
+
+```
+
+    public void btn_post(View view) {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("自定义的dialog");
-
-        String baseUrl = "http://apis.juhe.cn/"
-        String url = baseUrl + "mobile/get?phone=18856907654&key=5778e9d9cf089fc3b093b162036fc0e1";
-        XRetrofit.create(this)
+        XRetrofit.create()
+                .setDialog(progressDialog)
                 .build(baseUrl)
-                .setDialog(progressDialog) // 使用自定义的dialog
-              //  .hideDialog() 不显示等待的dialog 就使用这个方法
-                .doGet(PhoneBean.class, url, new OnRetrofit.OnGetListener<PhoneBean>() {
+                .doPost(MainActivity.this, PhoneBean.class, "mobile/get", new OnRetrofit.OnQueryMapListener<PhoneBean>() {
+                    @Override
+                    public void onMap(Map<String, String> map) {
+                        map.put("phone", "18856901111");
+                        map.put("key", "5778e9d9cf089fc3b093b162036fc0e1");
+                    }
+
                     @Override
                     public void onSuccess(PhoneBean phoneBean) {
                         Logger.e("phoneBean---->" + phoneBean.toString());
@@ -90,105 +169,32 @@ allprojects {
                         Logger.e("e---->" + e.getMessage());
                     }
                 });
-    }
-```
-
-#### 第二种
-
-后面的参数 需要移动端自己拼接的  
-
-
-
-```
-    public void btnQuery(View view) {
-        String baseUrl = "http://apis.juhe.cn/"
-        String url = baseUrl + "mobile/get";
-        XRetrofit.create(MainActivity.this)
-                .build(baseUrl)
-                .doGet(PhoneBean.class, url, new OnRetrofit.OnQueryMapListener<PhoneBean>() {
-                    @Override
-                    public void onMap(Map<String, String> map) {
-                        map.put("phone", "18856907654");
-                        map.put("key", "5778e9d9cf089fc3b093b162036fc0e1");
-                    }
-
-                    @Override
-                    public void onSuccess(PhoneBean phoneBean) {
-                        Logger.e("phoneBean---->" + phoneBean.toString());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
-    }
-```
-
-> 注意
-
-- baseUrl 必须以 ‘/’ 结束
-
-- url  不能有 '/'
-
-
-## Post
-
-
-接口 doPost  
-
-```
-
-    public void btnPath(View view) {
-        XRetrofit.create(this)
-                .build(baseUrl)
-                .hideDialog()
-                .doPost(PhoneBean.class, "mobile/get", new OnRetrofit.OnQueryMapListener<PhoneBean>() {
-                    @Override
-                    public void onMap(Map<String, String> map) {
-                        map.put("phone", "18856907654");
-                        map.put("key", "5778e9d9cf089fc3b093b162036fc0e1");
-                    }
-
-                    @Override
-                    public void onSuccess(PhoneBean phoneBean) {
-                        Logger.e("phoneBean---->" + phoneBean.toString());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
 
     }
 
+
 ```
 
-> 说明
+> 入参说明
 
-入参
-- 第一个参数 : Bean对象
+- 第一个参数 : 当前的Activity
+- 第二个参数 : Bean对象
 - 第二个参数 : post请求的后缀  比如我这里的 url 地址是 http://apis.juhe.cn/mobile/get/  所以需要加上后缀'mobile/get'  注意  不能以/ 结尾 否则胡出错
 
-## 下载
+##### 下载
 
-下载有很多情况需要考虑 下面就一一介绍一下
 
-#### 下载单个文件（小文件）
-
-#####（1）第一种方式
-
-这个就比方说下载一个图片啊  apk版本更新 什么的 
+下载单个文件（小文件）
 
 ```
-    public void btnPostFile(View view) {
-  
-        XRetrofit.create(this)
+
+ // 下载文件  自定义文件名
+    public void btn_downFileFromName(View view) {
+        XRetrofit.create()
                 .build(baseUrl)
-                .doDownLoad("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg",
+                .doDownLoad(imgUrl,
                         "1234",
-                        "小文件.jpg",
+                        "1.jpg",
                         new OnRetrofit.OnDownLoadListener() {
                             @Override
                             public void onSuccess(int terms) {
@@ -199,74 +205,63 @@ allprojects {
                             public void onError(Throwable e) {
                                 Logger.e("e----->" + e.getMessage());
                             }
+                        });
+
+    }
+
+    // 下载文件 文件名 根据下载时候服务端的命名
+    public void btn_downFileFromUrl(View view) {
+        XRetrofit.create()
+                .build(baseUrl)
+                .doDownLoad(imgUrl, "1234", new OnRetrofit.OnDownLoadListener() {
+                    @Override
+                    public void onSuccess(int terms) {
+                        Log.e("TAG", "TERMS---->" + terms);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Logger.e("e----->" + e.getMessage());
+                    }
+                });
+    }
+```
+
+
+
+
+下载大文件 断点下载
+
+```
+
+    //下载大文件 自己命名名字
+    public void btnDownBig(View view) {
+        XRetrofit.create()
+                .build(baseUrl)
+                .doDownLoadBig(imgUrl,
+                        "1234",
+                        "大文件.jpg",
+                        new OnRetrofit.OnDownLoadListener() {
+                            @Override
+                            public void onSuccess(int terms) {
+                                Log.e("TAG", "TERMS---->" + terms);
+                            }
 
                             @Override
-                            public void hasDown(String path) {
-                                Logger.e("path---->" + path);
+                            public void onError(Throwable e) {
+                                Logger.e("e----->" + e.getMessage());
                             }
                         });
     }
 
-```
 
 
-> 说明
 
-
-入参说明
-
-这里使用的是第一个方式
-- 第一个参数 url  下载地址
-- 第二个参数 downLoadPath 保存文件的文件夹名字  也可以写成  ‘12/12/23’  不要以 '/' 结束
-- 第三个参数 fileName 自定义的文件名称
-
-返回接口
-
-- onSuccess（int terms）
-    - 现在的进度，当terms == 100 时候  下载完成  一般这里可以放个进度条什么的
-- onError(Throwable e)
-    - 失败回调
-- hasDown(String path）
-    - 如果文件已经下载了  就会在这里出现提示  返回已经下载文件的地址
-    
-（2）第二种方式
-
-```
-        XRetrofit.create(this)
+    //下载大文件 服务端返回
+    public void btnDownBig(View view) {
+        XRetrofit.create()
                 .build(baseUrl)
-                .doDownLoad("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg",
-                        "1234",
-                        new OnRetrofit.OnDownLoadListener() {}
-```
-
-> 说明
-
-这里少了一个 fileName 的入参  默认的名字 就是你下载的名字  比如我这里的名字就是  u=3565619450,1776366346&fm=27&gp=0.jpg
-
-#### 下载多个文件
-
-```
-        List<String> urlList = Arrays.asList("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg",
-                "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2701408155,2184514200&fm=27&gp=0.jpg",
-                "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3565619450,1776366346&fm=27&gp=0.jpg");
-
-        XRetrofit.create(this)
-                .build(baseUrl)
-                .doDownLoad(urlList,
-                        "1234",
-                        new OnRetrofit.OnDownLoadListener() {}
-                           
-
-```
-
-
-```
-  HashMap<String, String> map = new HashMap<>();
-        map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg","1.jpg");
-        map.put("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2019270811,1269730008&fm=27&gp=0.jpg","2.jpg");
-        XRetrofit.create(this)
-                .build(baseUrl)
-                .doDownLoad(map,
+                .doDownLoadBig(imgUrl,
                         "1234",
                         new OnRetrofit.OnDownLoadListener() {
                             @Override
@@ -278,69 +273,16 @@ allprojects {
                             public void onError(Throwable e) {
                                 Logger.e("e----->" + e.getMessage());
                             }
-
-                            @Override
-                            public void hasDown(String path) {
-                                Logger.e("path---->" + path);
-                            }
-                        });
-```
-
-#### 下载大文件 断点下载
-
-```
-    public void btnDownBig(View view) {
-        XRetrofit.create(this)
-                .build(baseUrl)
-                .doDownLoadBig(url,
-                        "1234", "大文件.jpg", new OnRetrofit.OnDownLoadListener() {
-                            @Override
-                            public void onSuccess(int terms) {
-                                Log.e("TAG", "TERMS---->" + terms);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Logger.e("e----->" + e.getMessage());
-                            }
-
-                            @Override
-                            public void hasDown(String path) {
-                                Logger.e("path---->" + path);
-                            }
                         });
     }
-```
 
-```
-    public void btnDownBig(View view) {
-        XRetrofit.create(this)
-                .build(baseUrl)
-                .doDownLoadBig(url,
-                        "1234", new OnRetrofit.OnDownLoadListener() {
-                            @Override
-                            public void onSuccess(int terms) {
-                                Log.e("TAG", "TERMS---->" + terms);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Logger.e("e----->" + e.getMessage());
-                            }
-
-                            @Override
-                            public void hasDown(String path) {
-                                Logger.e("path---->" + path);
-                            }
-                        });
-    }
 ```
 
 暂停下载
 
 
 ```
- XRetrofit.create(this)
+ XRetrofit.create()
                 .stopDown(url);
 ```
 
@@ -350,46 +292,54 @@ allprojects {
 
 
 
-## 添加请求头
+##### 添加请求头
 
 ```
  HashMap<String, String> map = new HashMap<>();
         map.put("ip", "192.168.1.108");
-        XRetrofit.create(this)
+        XRetrofit.create()
                 .addHeard(map)
                 .build(baseUrl)
+                ...
 ```
 
 
-## 上传
+##### 上传
 
 ```
   public void upLoad(View view) {
-        XRetrofit.create(this)
-                .build(baseUrl)
-                .upLoad(PhoneBean.class, "", new OnRetrofit.OnUpLoadListener<PhoneBean>() {
-                    @Override
-                    public void onFormDataPartMap(Map<String, String> map) {
-                        map.put("fikename", "121212.pmg");
-                    }
+         XRetrofit.create()
+                 .build(baseUrl)
+                 .doUpLoad(PhoneBean.class, "http://192.168.1.121/log/file/upload", new OnRetrofit.OnUpLoadListener<PhoneBean>() {
+                     @Override
+                     public void onFormDataPartMap(Map<String, String> map) {
+                         map.put("Data", "2017-11-30");
+                         map.put("Site", "ZhuZou");
+                         map.put("User", "test");
+                         map.put("Name", "gps");
+                     }
+ 
+                     @Override
+                     public void onFileList(List<File> fileList) {
+                         String path = DownLoadUtil.create().createFile("1234") + "1.jpg";
+                         Logger.e("filepath---====--<" + path);
+                         File file = new File(path);
+                         fileList.add(file);
+                     }
+ 
+                     @Override
+                     public void onSuccess(PhoneBean phoneBean) {
+ 
+                     }
+ 
+                     @Override
+                     public void onError(Throwable e) {
+ 
+                     }
+                 });
+ 
+     }
 
-                    @Override
-                    public void onFileList(List<File> fileList) {
-                        fileList.add(new File("c:/xx/xx/121212/pmg"));
-                    }
-
-                    @Override
-                    public void onSuccess(PhoneBean phoneBean) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-                });
-
-    }
 
 ```
 
