@@ -15,10 +15,9 @@ allprojects {
 ### 在module中build.gradle添加
 
 	dependencies {
-	       compile 'com.github.JiangHaiYang01:XRetrofit:x.y.z'//引入最新版本即可
+	       compile 'com.github.stf-android:XRetrofit:x.y.z'//引入最新版本即可
 	}
-
-
+	
   
  
  # 使用配置
